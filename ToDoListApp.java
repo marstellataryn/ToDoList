@@ -161,5 +161,36 @@ public class ToDoListApp extends Application {
             add(new Label("High Priority:"), 0, 3);
             add(highPriorityCheckbox, 1, 3);
 
-            // Validation: Title and Due Date
+                        // Validation: Title and Due Date
+            isTaskValid = new BooleanBinding() {
+                {
+                    bind(titleField.textProperty(), dueDatePicker.valueProperty());
+                }
+
+                @Override
+                protected boolean computeValue() {
+                    return !titleField.getText().trim().isEmpty() && dueDatePicker.getValue() != null;
+                }
+            };
+
+            // Bind the validation to the form
+            titleField.disableProperty().bind(isTaskValid.not());
+            dueDatePicker.disableProperty().bind(isTaskValid.not());
+        }
+
+        public Task getTask() {
+            String title = titleField.getText().trim();
+            String description = descriptionArea.getText().trim();
+            LocalDate dueDate = dueDatePicker.getValue();
+            boolean highPriority = highPriorityCheckbox.isSelected();
+
+            return new Task(title, description, dueDate, highPriority);
+        }
+
+        public BooleanProperty isTaskValidProperty() {
+            return isTaskValid;
+        }
+    }
+}
+
 
